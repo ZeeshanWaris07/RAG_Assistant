@@ -2,9 +2,11 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from typing import List
 import os
 import shutil
-
+from pydantic import BaseModel
 from rag import RAGSystem
 
+class ChatRequest(BaseModel):
+    question: str
 
 app = FastAPI(title="PDF RAG API")
 
@@ -63,4 +65,19 @@ async def upload_pdfs(
     return {
         "message": "PDFs successfully uploaded and indexed.",
         "files": [file.filename for file in files]
+    }
+
+@app.post("/chat")
+async def chat(request : ChatRequest):
+
+    if not request.question.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Question cannot be empty"
+        )
+
+    result = rag.chat(request.question)
+
+    return {
+        "answer" : result
     }
