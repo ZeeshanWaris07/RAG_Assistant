@@ -1,30 +1,19 @@
 from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
-from langchain_core.prompts import PromptTemplate
-from langchain_google_genai import GoogleGenerativeAI
-from langchain_core.messages import AIMessage, HumanMessage
-from sentence_transformers import CrossEncoder
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
+import os
+from dotenv import load_dotenv
 
-class RAGSystem():
-    def __init__(self):
-        self.embeddings = HuggingFaceEmbeddings(
-            model_name = 'BAAI/bge-small-en-v1.5'
-        )
+load_dotenv()
 
-        self.reranker = CrossEncoder(
-            "BAAI/bge-reranker-base"
-        )
+class Ingestion:
+    def ingest_documents(self, file_paths):
 
-        self.llm = GoogleGenerativeAI(
-            model_name="gpt-4o",
-            temperature=0.2
-        )
+        pages = []
 
-        print('LLM initialized.')
+        for file_path in file_paths:
+            loader = PyPDFLoader(file_path)
+            pages.extend(loader.load())
 
-        self.prompt_template = PromptTemplate(
-            template="""You are a helpful assistant that answers questions based on the provided context.
+        chunks = self.text_splitter.split_documents(pages)
+
+        self.vector_store.add_documents(chunks)
