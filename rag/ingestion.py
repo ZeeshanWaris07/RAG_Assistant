@@ -16,4 +16,21 @@ class Ingestion:
 
         chunks = self.text_splitter.split_documents(pages)
 
-        self.vector_store.add_documents(chunks)
+        self.bm25_retrieval(
+             documents = chunks
+             k = 10
+        )
+
+        if not os.path.exists(self.persist_directory):      
+                self.vector_store = Chroma.from_documents(
+                    documents= chunks,
+                    embedding= self.embeddings,
+                    persist_directory= self.persist_directory
+                )
+        else:
+            self.vector_store = Chroma(
+                persist_directory= self.persist_directory,
+                embedding_function= self.embeddings
+            )
+
+        
