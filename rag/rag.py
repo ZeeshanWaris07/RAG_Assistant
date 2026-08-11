@@ -37,6 +37,8 @@ class RAGSystem(Ingestion,Retrieval):
         )
 
         self.vector_store = None
+
+        self.bm25_retriever = None
         
 
 
