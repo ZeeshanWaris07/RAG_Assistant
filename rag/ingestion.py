@@ -17,7 +17,7 @@ class Ingestion:
         chunks = self.text_splitter.split_documents(pages)
 
         self.bm25_retrieval(
-             documents = chunks
+             documents = chunks,
              k = 10
         )
 
