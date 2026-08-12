@@ -20,6 +20,10 @@ class Retrieval:
 
         return [doc for score,doc in reranked_docs]
 
+
+    def generate(self,question,top_chunks):
+        
+
     def chat(self,question):
 
         search_retriever = self.vector_store.as_retriever(
@@ -45,7 +49,7 @@ class Retrieval:
 
         top_chunks = reranked_docs[:5]
 
-        
+
 
 
 

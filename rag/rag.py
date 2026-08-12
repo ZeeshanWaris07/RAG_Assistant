@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import os
 from .ingestion import Ingestion
 from .retrieval import Retrieval
-
+from .prompts import rewrite_prompt
 
 load_dotenv()
 
@@ -39,7 +39,15 @@ class RAGSystem(Ingestion,Retrieval):
         self.vector_store = None
 
         self.bm25_retriever = None
-        
+
+        self.rewrite_prompt = rewrite_prompt
+        self.chat_history = []
+
+        self.rewrite_chain = (
+            self.rewrite_prompt,
+            self.llm,
+            StrOutputParser()
+        )
 
 
         
