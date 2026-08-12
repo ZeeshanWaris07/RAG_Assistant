@@ -7,6 +7,21 @@ class Retrieval:
 
         pass
 
+    def make_pairs(self,question,documents):
+        pairs = []
+
+        for doc in documents:
+            pairs.append((question,doc.page_content))
+
+        return pairs
+
+    def make_reranked_docs(scores,docs):
+        reranked_docs = sorted(
+            zip(scores,docs),
+            key= lambda x: x[0],
+            reverse=True
+        )
+
     def chat(self,question):
 
         search_retriever = self.vector_store.as_retriever(
@@ -23,6 +38,18 @@ class Retrieval:
         )
 
         retrieved_chunks = retriever.invoke(question)
+
+        pairs = self.make_pairs(question,retrieved_chunks)
+
+        scores = self.reranker.predict(pairs)
+
+        reranked_docs = self.make_reranked_docs(scores,retrieved_chunks)
+
+        
+
+
+
+
         
 
         
