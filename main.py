@@ -3,7 +3,7 @@ from typing import List
 import os
 import shutil
 from pydantic import BaseModel
-from rag import RAGSystem
+from rag.rag import RAGSystem
 
 class ChatRequest(BaseModel):
     question: str
@@ -23,14 +23,14 @@ def root():
 
 @app.post("/upload")
 async def upload_pdfs(
-    files: List[UploadFile] = File(...)
+    file1: UploadFile | None = File(None),
+    file2: UploadFile | None = File(None),
+    file3: UploadFile | None = File(None)
 ):
-    # Maximum 3 PDFs
-    if len(files) > 3:
-        raise HTTPException(
-            status_code=400,
-            detail="You can upload a maximum of 3 PDFs."
-        )
+    files = [
+        file for file in [file1, file2, file3]
+        if file is not None
+    ]
 
     if len(files) == 0:
         raise HTTPException(
@@ -42,7 +42,6 @@ async def upload_pdfs(
 
     for file in files:
 
-        # Check extension
         if not file.filename.lower().endswith(".pdf"):
             raise HTTPException(
                 status_code=400,
@@ -59,7 +58,6 @@ async def upload_pdfs(
 
         saved_files.append(file_path)
 
-    # Send PDFs to your RAG system
     rag.ingest_documents(saved_files)
 
     return {

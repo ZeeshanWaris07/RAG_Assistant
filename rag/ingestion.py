@@ -2,7 +2,7 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_chroma import Chroma
 import os
 from dotenv import load_dotenv
-
+from langchain_community.retrievers import BM25Retriever
 load_dotenv()
 
 class Ingestion:
@@ -16,7 +16,7 @@ class Ingestion:
 
         chunks = self.text_splitter.split_documents(pages)
 
-        self.bm25_retrieval(
+        self.bm25_retriever = BM25Retriever.from_documents(
              documents = chunks,
              k = 10
         )

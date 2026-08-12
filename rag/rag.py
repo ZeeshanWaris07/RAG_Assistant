@@ -3,7 +3,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.prompts import PromptTemplate
-from langchain_google_genai import GoogleGenerativeAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import AIMessage, HumanMessage
 from sentence_transformers import CrossEncoder
 from langchain_core.output_parsers import StrOutputParser
@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 import os
 from .ingestion import Ingestion
 from .retrieval import Retrieval
-from .prompts import rewrite_prompt
+from .prompts import rewrite_prompt,generation_prompt
 
 load_dotenv()
 
@@ -32,7 +32,7 @@ class RAGSystem(Ingestion,Retrieval):
             "BAAI/bge-reranker-base"
         )
 
-        self.llm = GoogleGenerativeAI(
+        self.llm = ChatGoogleGenerativeAI(
             model = "gemini-3.6-flash" 
         )
 
@@ -40,14 +40,24 @@ class RAGSystem(Ingestion,Retrieval):
 
         self.bm25_retriever = None
 
+
         self.rewrite_prompt = rewrite_prompt
+        self.generation_prompt = generation_prompt
+
         self.chat_history = []
 
         self.rewrite_chain = (
-            self.rewrite_prompt,
-            self.llm,
-            StrOutputParser()
+            self.rewrite_prompt
+            | self.llm
+            | StrOutputParser()
         )
+
+        self.generation_chain = (
+            self.generation_prompt
+            | self.llm
+            | StrOutputParser()
+        )
+            
 
 
         
