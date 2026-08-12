@@ -3,10 +3,6 @@ from langchain_classic.retrievers import EnsembleRetriever
 
 class Retrieval:
 
-    def retrieve_chunks(self,question):
-
-        pass
-
     def make_pairs(self,question,documents):
         pairs = []
 
@@ -21,6 +17,8 @@ class Retrieval:
             key= lambda x: x[0],
             reverse=True
         )
+
+        return [doc for score,doc in reranked_docs]
 
     def chat(self,question):
 
@@ -45,7 +43,11 @@ class Retrieval:
 
         reranked_docs = self.make_reranked_docs(scores,retrieved_chunks)
 
+        top_chunks = reranked_docs[:5]
+
         
+
+
 
 
 
