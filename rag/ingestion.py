@@ -10,10 +10,26 @@ class Ingestion:
 
         pages = []
 
+        try:
+            from langchain_community.document_loaders import PDFPlumberLoader
+        except Exception:
+            PDFPlumberLoader = None
+
         for file_path in file_paths:
+            # Prefer PDFPlumberLoader which usually preserves spaces better
+            if PDFPlumberLoader is not None:
+                try:
+                    loader = PDFPlumberLoader(file_path)
+                    pages.extend(loader.load())
+                    continue
+                except Exception as e:
+                    # If PDFPlumber fails for any reason, fall back to PyPDFLoader
+                    print(f"PDFPlumberLoader failed for {file_path}, falling back to PyPDFLoader: {e}")
+
             loader = PyPDFLoader(file_path)
             pages.extend(loader.load())
 
+        
         chunks = self.text_splitter.split_documents(pages)
 
         self.bm25_retriever = BM25Retriever.from_documents(

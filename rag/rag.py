@@ -23,8 +23,8 @@ class RAGSystem(Ingestion,Retrieval):
         )
 
         self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size = 500,
-            chunk_overlap = 50
+            chunk_size = 900,
+            chunk_overlap = 150
         )
 
         self.persist_directory = "./chroma_db"
