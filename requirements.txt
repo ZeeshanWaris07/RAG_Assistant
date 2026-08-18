@@ -16,3 +16,8 @@ rank-bm25
 
 sentence-transformers
 FlagEmbedding
+
+pydantic
+python-dotenv
+
+google-generativeai
