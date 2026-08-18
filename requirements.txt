@@ -10,3 +10,9 @@ langchain-text-splitters
 pypdf
 pdfplumber
 python-docx
+
+faiss-cpu
+rank-bm25
+
+sentence-transformers
+FlagEmbedding
